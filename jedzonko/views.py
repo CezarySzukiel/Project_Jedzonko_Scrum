@@ -11,7 +11,12 @@ class IndexView(View):
 
 class Dashboard(View):
     def get(self, request):
-        return render(request, "jedzonko/dashboard.html")
+        context = {
+            'recipes': Recipe.objects.all().count(),
+            # 'plans': Plan.objects.all().count()
+        }
+        return render(request, "jedzonko/dashboard.html", context)
+        
 
 
 class RecipeView(View):
