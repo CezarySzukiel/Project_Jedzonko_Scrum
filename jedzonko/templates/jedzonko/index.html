@@ -17,7 +17,7 @@
 <body>
     <header class="page-header">
         <nav class="navbar navbar-expand-lg justify-content-around">
-            <a href="/static" class="navbar-brand main-logo">
+            <a href="/main/" class="navbar-brand main-logo">
                 Zaplanuj <span>Jedzonko</span>
             </a>
             <ul class="nav nounderline text-uppercase">
@@ -33,7 +33,7 @@
                     <a class="nav-link" href="#about">o aplikacji</a>
                 </li>
                 <li class="nav-item ml-4">
-                    <a class="nav-link disabled" href="recipes.html">Przepisy</a>
+                    <a class="nav-link disabled" href="{% url 'recipe' %}">Przepisy</a>
                 </li>
                 <li class="nav-item ml-4">
                     <a class="nav-link disabled" href="#contact">Kontakt</a>
@@ -48,27 +48,24 @@
                 <div class="carousel-item active">
                     <div class="container w-75 d-flex">
                         <div class="carousel-caption d-block">
-                            <h1>Lorem ipsum dolor sit amet</h1>
-                            <h3> consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                                magna aliqua.</h3>
+                            <h1>{{ names.0 }}</h1>
+                            <h3> {{ descriptions.0 }}</h3>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <div class="container w-75 d-flex">
                         <div class="carousel-caption d-block">
-                            <h1>Torem ipsum dolor sit amet</h1>
-                            <h3> consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                                magna aliqua.</h3>
+                            <h1>{{ names.1 }}</h1>
+                            <h3> {{ descriptions.1 }}</h3>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <div class="container w-75 d-flex">
                         <div class="carousel-caption d-block">
-                            <h1>Borem ipsum dolor sit amet</h1>
-                            <h3> consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                                magna aliqua.</h3>
+                            <h1>{{ names.2 }}</h1>
+                            <h3> {{ descriptions.2 }}</h3>
                         </div>
                     </div>
                 </div>
@@ -155,11 +152,10 @@
                 </div>
 
                 <div class="col-7 ml-4">
-                    <h1 class="pb-1">Lorem ipsum dolor sit amet</h1>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at porttitor sem. Aliquam erat
-                        volutpat. Donec placerat nisl magna, et faucibus arcu condimentum sed. Lorem ipsum dolor sit
-                        amet, consectetur adipiscing elit. Aliquam at porttitor sem. Aliquam erat volutpat. Donec
-                        placerat nisl magna, et faucibus arcu condimentum sed.
+                    <h1 class="pb-1">Zaplanuj zdrowe odżywianie z Zaplanuj Jedzonko!</h1>
+                    <p>Zdrowe odżywianie nigdy nie było tak proste! Nasza strona pozwoli Ci zaplanować zdrowy tryb życia,
+                        dzięki tworzeniu nowych przepisów, dzięki którym odkryjesz siebie na nowo, i planowaniu regularnych
+                        posiłków. Dzięki nam wszystko, co potrzebne do zdrowego życia, będziesz miał w jednym miejscu!
                     </p>
                 </div>
             </div>
@@ -170,26 +166,29 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h3 class="mb-4">Lorem ipsum dolor</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at porttitor sem.  Aliquam erat volutpat. Donec placerat nisl magna.</p>
+                    <h3 class="mb-4">Nasz adres</h3>
+                    <p>Zaplanuj Jedzonko Inc. <br>
+                        Warszawa <br>
+                       Ulica Jana Pawła III 45 <br>
+                        00-013
+                    </p>
                 </div>
                 <div class="col pl-4 ml-4">
-                    <h3 class="mb-4">Lorem ipsum dolor</h3>
+                    <h3 class="mb-4">Kontakt do nas</h3>
                     <ul class="container">
-                        <li>consectetur adipiscing elit</li>
-                        <li>sed do eiusmod tempor</li>
-                        <li>incididunt ut labore</li>
-                        <li>et dolore magna aliqua</li>
+                        <li>Email: Jedzonko@gmail.com</li>
+                        <li>Nr telefonu: 444-555-666</li>
+                        <li>NIP: 999999999</li>
                     </ul>
                 </div>
                 <div class="col">
-                    <h3 class="mb-4">Lorem ipsum dolor</h3>
+                    <h3 class="mb-4">Zarejestruj się</h3>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control border-0 rounded-0" placeholder=""
                             aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <div class="input-group-append">
                             <button class="input-group-text btn-color border-0 rounded-0" type="submit" id="basic-addon2"><a
-                                    href="index.html">Lorem</a></button>
+                                    href="index.html">Zarejestruj się</a></button>
                         </div>
                     </div>
                     <div class="container d-flex-row">
