@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
@@ -21,7 +22,7 @@ class Dashboard(View):
 
 
 class RecipeView(View):
-   def get(self, request):
+   def get(self, request, id):
         return HttpResponse("Tu będzie widok przepisu")
 
 
@@ -36,7 +37,7 @@ class AddRecipe(View):
 
 
 class ModifyRecipe(View):
-    def get(self, request):
+    def get(self, request, id):
         return HttpResponse("Tu będzie modyfikacja przepisu")
 
 
@@ -56,5 +57,10 @@ class AddRecipeToPlan(View):
 
 
 def recipe(request):
-    return render(request, 'jedzonko/app-recipes.html')
+    recipes_list = Recipe.objects.all().order_by('-votes', 'created')
+    paginator = Paginator(recipes_list, 50)
 
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
