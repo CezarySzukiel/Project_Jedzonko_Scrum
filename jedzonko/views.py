@@ -15,13 +15,13 @@ class Dashboard(View):
 
 
 class RecipeView(View):
-    def get(self, request):
+   def get(self, request):
         return HttpResponse("Tu będzie widok przepisu")
 
 
-class RecipeList(View):
-    def get(self, request):
-        return HttpResponse("Tu będzie lista przepisów")
+# class RecipeList(View):
+  # def get(self, request):
+    #    return HttpResponse("Tu będzie lista przepisów")
 
 
 class AddRecipe(View):
@@ -47,3 +47,8 @@ class AddPlan(View):
 class AddRecipeToPlan(View):
     def get(self, request):
         return HttpResponse("Tu będzie dodawanie przepisu do planu")
+
+
+def recipe(request):
+    return render(request, 'jedzonko/app-recipes.html')
+
