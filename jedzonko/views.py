@@ -24,9 +24,11 @@ class IndexView(View):
 
 class Dashboard(View):
     def get(self, request):
+        newest_plan = Plan.objects.all().order_by('created').first()
         context = {
             'recipes': Recipe.objects.all().count(),
-            # 'plans': Plan.objects.all().count()
+            'plans': Plan.objects.all().count(),
+            'newestPlan': newest_plan,
         }
         return render(request, "jedzonko/dashboard.html", context)
 
@@ -38,8 +40,8 @@ class RecipeView(View):
 
 
 # class RecipeList(View):
-  # def get(self, request):
-    #    return HttpResponse("Tu będzie lista przepisów")
+# def get(self, request):
+#    return HttpResponse("Tu będzie lista przepisów")
 
 
 class AddRecipe(View):
