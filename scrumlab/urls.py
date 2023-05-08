@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', jedzonko_views.IndexView.as_view()),
     path('main/', jedzonko_views.Dashboard.as_view()),
+    path('recipe/list/', jedzonko_views.recipe, name='recipe'),
 ]
