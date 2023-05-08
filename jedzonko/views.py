@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
-from models import *
+from .models import *
 
 
 class IndexView(View):
@@ -12,22 +12,23 @@ class IndexView(View):
 
 class Dashboard(View):
     def get(self, request):
+        # newestPlan = Plan.objects.all().ordered_by('created')[0]
         context = {
             'recipes': Recipe.objects.all().count(),
-            # 'plans': Plan.objects.all().count()
+            # 'plans': Plan.objects.all().count(),
+            # 'newestPlan': newestPlan,
         }
         return render(request, "jedzonko/dashboard.html", context)
-        
 
 
 class RecipeView(View):
-   def get(self, request):
+    def get(self, request):
         return HttpResponse("Tu będzie widok przepisu")
 
 
 # class RecipeList(View):
-  # def get(self, request):
-    #    return HttpResponse("Tu będzie lista przepisów")
+# def get(self, request):
+#    return HttpResponse("Tu będzie lista przepisów")
 
 
 class AddRecipe(View):
@@ -57,4 +58,3 @@ class AddRecipeToPlan(View):
 
 def recipe(request):
     return render(request, 'jedzonko/app-recipes.html')
-
