@@ -2,14 +2,15 @@ from django.db import models
 
 
 class Recipe(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=64)
     ingredients = models.TextField()
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     preparation_time = models.IntegerField()
     preparation_method = models.TextField()
-    votes = models.IntegerField()
+    votes = models.IntegerField(default=0)
+
 
 
 class Plan(models.Model):

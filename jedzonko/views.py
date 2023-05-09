@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 import random
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from jedzonko.models import *
 
@@ -11,8 +11,8 @@ class IndexView(View):
 
     def get(self, request):
         recipes = []
-        for recipe in Recipe.objects.all():
-            recipes.append([recipe.name, recipe.description])
+        for my_recipe in Recipe.objects.all():
+            recipes.append([my_recipe.name, my_recipe.description])
         random.shuffle(recipes)
 
         names = [i[0] for i in recipes[:3]]
@@ -33,9 +33,8 @@ class Dashboard(View):
         return render(request, "jedzonko/dashboard.html", context)
 
 
-
 class RecipeView(View):
-   def get(self, request, id):
+    def get(self, request, id):
         return HttpResponse("Tu będzie widok przepisu")
 
 
@@ -46,7 +45,35 @@ class RecipeView(View):
 
 class AddRecipe(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie jednego przepisu")
+        return render(request, 'jedzonko/app-add-recipe.html')
+
+    def post(self, request):
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        time = request.POST.get('time')
+
+        preparation = request.POST.get('preparation')
+        ingredients = request.POST.get('ingredients')
+
+        if not (name and description and time and preparation and ingredients):
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Musisz uzupełnić wszystkie pola'})
+
+        try:
+            time = int(time)
+        except ValueError:
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Czas przygotowania musi być liczbą całkowitą'})
+
+        if time < 1:
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Minimalny czas przygotowania to jedna minuta'})
+
+        Recipe.objects.create(name=name, description=description,
+                              preparation_time=time, preparation_method=preparation,
+                              ingredients=ingredients)
+
+        return redirect('recipe')
 
 
 class ModifyRecipe(View):
