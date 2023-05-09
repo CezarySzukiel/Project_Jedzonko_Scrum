@@ -4,12 +4,13 @@ from django.utils import timezone
 
 class Recipe(models.Model):
     name = models.CharField(max_length=64)
-    # ingredients = models.ManyToManyField(Ingredients)
+    ingredients = models.TextField()
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     preparation_time = models.IntegerField()
-    votes = models.IntegerField()
+    preparation_method = models.TextField()
+    votes = models.IntegerField(default=0)
 
 
 class Plan(models.Model):
