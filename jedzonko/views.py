@@ -50,18 +50,24 @@ class AddRecipe(View):
     def post(self, request):
         name = request.POST.get('name')
         description = request.POST.get('description')
-        try:
-            time = int(request.POST.get('time'))
-        except ValueError:
-            return HttpResponse('Czas przygotowania musi być liczbą całkowitą')
+        time = request.POST.get('time')
+
         preparation = request.POST.get('preparation')
         ingredients = request.POST.get('ingredients')
 
         if not (name and description and time and preparation and ingredients):
-            return HttpResponse('Musisz uzupełnić wszystkie pola')
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Musisz uzupełnić wszystkie pola'})
+
+        try:
+            time = int(time)
+        except ValueError:
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Czas przygotowania musi być liczbą całkowitą'})
 
         if time < 1:
-            return HttpResponse('Minimalny czas przygotowania to jedna minuta')
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Minimalny czas przygotowania to jedna minuta'})
 
         Recipe.objects.create(name=name, description=description,
                               preparation_time=time, preparation_method=preparation,

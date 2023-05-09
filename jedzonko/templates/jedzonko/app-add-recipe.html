@@ -9,6 +9,11 @@
                 <div class="row border-bottom border-3">
                     <div class="col"><h3 class="color-header text-uppercase">Nowy
                         przepis</h3></div>
+                    <h4 style="color: red">
+                        {% if message %}
+                            {{ message }}
+                        {% endif %}
+                    </h4>
                     <div class="col d-flex justify-content-end mb-2">
                         <button type="submit"
                                 class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
