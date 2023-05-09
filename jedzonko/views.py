@@ -33,9 +33,8 @@ class Dashboard(View):
         return render(request, "jedzonko/dashboard.html", context)
 
 
-
 class RecipeView(View):
-   def get(self, request, id):
+    def get(self, request, id):
         return HttpResponse("Tu będzie widok przepisu")
 
 
@@ -61,7 +60,7 @@ class PlanList(View):
 
 class AddPlan(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie nowego planu")
+        return render(request, 'jedzonko/app-add-schedules.html')
 
 
 class AddRecipeToPlan(View):
