@@ -29,13 +29,13 @@ class Dashboard(View):
             'recipes': Recipe.objects.all().count(),
             'plans': Plan.objects.all().count(),
             'newestPlan': newest_plan,
+            'recipePlan': RecipePlan.objects.get(newest_plan.id),
         }
         return render(request, "jedzonko/dashboard.html", context)
 
 
-
 class RecipeView(View):
-   def get(self, request, id):
+    def get(self, request, id):
         return HttpResponse("Tu będzie widok przepisu")
 
 
