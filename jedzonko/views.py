@@ -24,15 +24,14 @@ class IndexView(View):
 
 class Dashboard(View):
     def get(self, request):
-        newest_plan = Plan.objects.all().order_by('created').first()
+        newest_plan = Plan.objects.all().order_by('-id').first()
         context = {
             'recipes': Recipe.objects.all().count(),
             'plans': Plan.objects.all().count(),
             'newestPlan': newest_plan,
             'recipePlan': RecipePlan.objects.filter(plan_id=newest_plan.id),
-            'days': DayName.objects.filter(recipeplan__plan_id=1).distinct(),
+            'days': DayName.objects.filter(recipeplan__plan_id=newest_plan.id).distinct(),
         }
-
         return render(request, "jedzonko/dashboard.html", context)
 
 
