@@ -10,10 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='recipe',
-            name='ingredients',
-            field=models.TextField(default='asdasd'),
-            preserve_default=False,
-        ),
+
     ]

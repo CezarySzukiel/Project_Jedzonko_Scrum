@@ -11,36 +11,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='recipe',
-            name='ingredients',
-            field=models.TextField(default=django.utils.timezone.now),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='recipe',
-            name='preparation_method',
-            field=models.TextField(default=django.utils.timezone.now),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='dayname',
-            name='name',
-            field=models.CharField(max_length=16),
-        ),
-        migrations.AlterField(
-            model_name='plan',
-            name='name',
-            field=models.CharField(max_length=255),
-        ),
-        migrations.AlterField(
-            model_name='recipe',
-            name='name',
-            field=models.CharField(max_length=255),
-        ),
-        migrations.AlterField(
-            model_name='recipeplan',
-            name='meal_name',
-            field=models.CharField(max_length=255),
-        ),
+
     ]
