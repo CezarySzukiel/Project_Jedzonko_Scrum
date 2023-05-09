@@ -29,8 +29,10 @@ class Dashboard(View):
             'recipes': Recipe.objects.all().count(),
             'plans': Plan.objects.all().count(),
             'newestPlan': newest_plan,
-            'recipePlan': RecipePlan.objects.get(newest_plan.id),
+            'recipePlan': RecipePlan.objects.filter(plan_id=newest_plan.id),
+            'days': DayName.objects.filter(recipeplan__plan_id=1).distinct(),
         }
+
         return render(request, "jedzonko/dashboard.html", context)
 
 

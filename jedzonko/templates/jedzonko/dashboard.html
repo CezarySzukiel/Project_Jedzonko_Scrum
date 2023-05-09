@@ -39,23 +39,25 @@
             <span>Ostatnio dodany plan:</span> {{ newestPlan.name }}
         </h2>
         <table class="table">
-            {% for day in newestPlan.day_name %}
+            {% for day in days %}
                 <thead>
                 <tr class="d-flex">
-                    <th class="col-2">{{ recipePlan.day_name }}</th>
+                    <th class="col-2">{{ day.name }}</th>
                     <th class="col-8"></th>
                     <th class="col-2"></th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for recipe in recipePlan %}
+                    {% if recipe.day_name_id == day.id %}
                     <tr class="d-flex">
-                        <td class="col-2">{{ recipePlan.meal_name }}</td>
-                        <td class="col-8">{{ recipePlan.description }}</td>
-                        <td class="col-2"><a href="recipe/{{ recipePlan.recipe.id }}">
+                        <td class="col-2">{{ recipe.meal_name }}</td>
+                        <td class="col-8">{{ recipe.recipe.description }}</td>
+                        <td class="col-2"><a href="recipe/{{ recipe.recipe.id }}">
                             <button type="button" class="btn btn-primary rounded-0">Szczegóły</button>
                         </a></td>
                     </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             {% endfor %}
