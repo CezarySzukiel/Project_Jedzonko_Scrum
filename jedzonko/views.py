@@ -83,7 +83,12 @@ class ModifyRecipe(View):
 
 class PlanList(View):
     def get(self, request):
-        return HttpResponse("Tu będzie lista planów")
+        plan_list = Plan.objects.all().order_by('name')
+        paginator = Paginator(plan_list, 50)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, 'jedzonko/app-schedules.html', {'page_obj': page_obj})
 
 
 class AddPlan(View):
