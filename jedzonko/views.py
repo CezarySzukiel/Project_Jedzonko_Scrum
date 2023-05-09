@@ -95,6 +95,15 @@ class AddPlan(View):
     def get(self, request):
         return render(request, 'jedzonko/app-add-schedules.html')
 
+    def post(self, request):
+        name = request.POST.get("planName")
+        desc = request.POST.get("planDescription")
+        if not (name and desc):
+            return render(request, 'jedzonko/app-add-schedules.html', {'message': f'Musisz uzupełnić wszystkie pola {desc}'})
+        Plan.objects.create(name=name, description=desc)
+        my_id = Plan.objects.latest('pk').id
+        return redirect(f"/plan/{my_id}/details/")
+
 
 class AddRecipeToPlan(View):
     def get(self, request):
@@ -109,3 +118,7 @@ def recipe(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
+
+class PlanDetails(View):
+    def get(self, request, id):
+        return HttpResponse("Tu będą szczegóły planu")
