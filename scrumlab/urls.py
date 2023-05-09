@@ -24,10 +24,11 @@ urlpatterns = [
 
     path('recipe/<int:id>/', jedzonko_views.RecipeView.as_view()),
     # path('recipe/list/', jedzonko_views.RecipeList.as_view()),
-    path('recipe/add/', jedzonko_views.AddRecipe.as_view()),
+    path('recipe/add/', jedzonko_views.AddRecipe.as_view(), name='add_recipe'),
     path('recipe/modify/<int:id>/', jedzonko_views.ModifyRecipe.as_view()),
     path('plan/list/', jedzonko_views.PlanList.as_view()),
     path('plan/add/', jedzonko_views.AddPlan.as_view()),
     path('plan/add-recipe/', jedzonko_views.AddRecipeToPlan.as_view()),
     path('recipe/list/', jedzonko_views.recipe, name='recipe'),
+    path('plan/<int:id>/details/', jedzonko_views.PlanDetails.as_view()),
 ]

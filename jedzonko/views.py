@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 import random
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from jedzonko.models import *
 
@@ -11,8 +11,8 @@ class IndexView(View):
 
     def get(self, request):
         recipes = []
-        for recipe in Recipe.objects.all():
-            recipes.append([recipe.name, recipe.description])
+        for my_recipe in Recipe.objects.all():
+            recipes.append([my_recipe.name, my_recipe.description])
         random.shuffle(recipes)
 
         names = [i[0] for i in recipes[:3]]
@@ -47,7 +47,35 @@ class RecipeView(View):
 
 class AddRecipe(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie jednego przepisu")
+        return render(request, 'jedzonko/app-add-recipe.html')
+
+    def post(self, request):
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        time = request.POST.get('time')
+
+        preparation = request.POST.get('preparation')
+        ingredients = request.POST.get('ingredients')
+
+        if not (name and description and time and preparation and ingredients):
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Musisz uzupełnić wszystkie pola'})
+
+        try:
+            time = int(time)
+        except ValueError:
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Czas przygotowania musi być liczbą całkowitą'})
+
+        if time < 1:
+            return render(request, 'jedzonko/app-add-recipe.html',
+                          {'message': 'Minimalny czas przygotowania to jedna minuta'})
+
+        Recipe.objects.create(name=name, description=description,
+                              preparation_time=time, preparation_method=preparation,
+                              ingredients=ingredients)
+
+        return redirect('recipe')
 
 
 class ModifyRecipe(View):
@@ -57,12 +85,26 @@ class ModifyRecipe(View):
 
 class PlanList(View):
     def get(self, request):
-        return HttpResponse("Tu będzie lista planów")
+        plan_list = Plan.objects.all().order_by('name')
+        paginator = Paginator(plan_list, 50)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, 'jedzonko/app-schedules.html', {'page_obj': page_obj})
 
 
 class AddPlan(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie nowego planu")
+        return render(request, 'jedzonko/app-add-schedules.html')
+
+    def post(self, request):
+        name = request.POST.get("planName")
+        desc = request.POST.get("planDescription")
+        if not (name and desc):
+            return render(request, 'jedzonko/app-add-schedules.html', {'message': f'Musisz uzupełnić wszystkie pola {desc}'})
+        Plan.objects.create(name=name, description=desc)
+        my_id = Plan.objects.latest('pk').id
+        return redirect(f"/plan/{my_id}/details/")
 
 
 class AddRecipeToPlan(View):
@@ -78,3 +120,7 @@ def recipe(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
+
+class PlanDetails(View):
+    def get(self, request, id):
+        return HttpResponse("Tu będą szczegóły planu")
