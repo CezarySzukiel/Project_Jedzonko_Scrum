@@ -46,7 +46,18 @@ class RecipeView(View):
 
 class AddRecipe(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie jednego przepisu")
+        return render(request, 'jedzonko/app-add-recipe.html')
+
+    def post(self, request):
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        time = request.POST.get('time')
+        preparation = request.POST.get('preparation')
+        ingredients = request.POST.get('ingredients')
+
+        return HttpResponse(f'name: {name}, description: {description}, time: {time},'
+                            f' preparation: {preparation}, ingredients: {ingredients}')
+
 
 
 class ModifyRecipe(View):
