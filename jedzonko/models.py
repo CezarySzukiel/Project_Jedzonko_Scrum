@@ -11,6 +11,8 @@ class Recipe(models.Model):
     preparation_method = models.TextField()
     votes = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.name
 
 
 class Plan(models.Model):
@@ -19,10 +21,16 @@ class Plan(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     recipes = models.ManyToManyField(Recipe, through='RecipePlan')
 
+    def __str__(self):
+        return self.name
+
 
 class DayName(models.Model):
     name = models.CharField(max_length=16)
     order = models.IntegerField(unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class RecipePlan(models.Model):
@@ -31,3 +39,6 @@ class RecipePlan(models.Model):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
     order = models.IntegerField()
     day_name = models.ForeignKey(DayName, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
