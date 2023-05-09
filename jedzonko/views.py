@@ -93,7 +93,7 @@ class PlanList(View):
 
 class AddPlan(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie nowego planu")
+        return render(request, 'jedzonko/app-add-schedules.html')
 
 
 class AddRecipeToPlan(View):
