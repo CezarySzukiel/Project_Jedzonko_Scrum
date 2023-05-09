@@ -41,4 +41,4 @@ class RecipePlan(models.Model):
     day_name = models.ForeignKey(DayName, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.meal_name
