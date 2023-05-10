@@ -39,9 +39,9 @@ class RecipeView(View):
     def get(self, request, id_):
         my_recipe = Recipe.objects.get(pk=id_)
         # splitting by enters and removing double enters
-        preparation = [i for i in my_recipe.preparation_method.split("\n") if i]
-        ingredients = [i for i in my_recipe.ingredients.split("\n") if i]
-
+        preparation = [i for i in my_recipe.preparation_method.split("\n") if i and i != '\r']
+        ingredients = [i for i in my_recipe.ingredients.split("\n") if i and i != '\r']
+        print(preparation)
         return render(request, 'jedzonko/app-recipe-details.html',
                       {'recipe': my_recipe,
                        'preparation': preparation,
