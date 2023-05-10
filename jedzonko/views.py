@@ -121,6 +121,13 @@ def recipe(request):
 
     return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
 
+
 class PlanDetails(View):
     def get(self, request, id):
-        return HttpResponse("Tu będą szczegóły planu")
+        plan = Plan.objects.get(pk=id)
+        days = DayName.objects.filter(recipeplan__plan_id=id).distinct()
+        meals = RecipePlan.objects.all()
+        recipe_plan = RecipePlan.objects.filter(plan_id=id)
+        context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals}
+        return render(request, 'jedzonko/app-details-schedules.html', context)
+
