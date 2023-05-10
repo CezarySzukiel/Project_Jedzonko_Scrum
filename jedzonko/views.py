@@ -36,8 +36,16 @@ class Dashboard(View):
 
 
 class RecipeView(View):
-    def get(self, request, id):
-        return HttpResponse("Tu będzie widok przepisu")
+    def get(self, request, id_):
+        my_recipe = Recipe.objects.get(pk=id_)
+        # splitting by enters and removing double enters
+        preparation = [i for i in my_recipe.preparation_method.split("\n") if i]
+        ingredients = [i for i in my_recipe.ingredients.split("\n") if i]
+
+        return render(request, 'jedzonko/app-recipe-details.html',
+                      {'recipe': my_recipe,
+                       'preparation': preparation,
+                       'ingredients': ingredients})
 
 
 # class RecipeList(View):
@@ -101,7 +109,8 @@ class AddPlan(View):
         name = request.POST.get("planName")
         desc = request.POST.get("planDescription")
         if not (name and desc):
-            return render(request, 'jedzonko/app-add-schedules.html', {'message': f'Musisz uzupełnić wszystkie pola {desc}'})
+            return render(request, 'jedzonko/app-add-schedules.html',
+                          {'message': f'Musisz uzupełnić wszystkie pola {desc}'})
         Plan.objects.create(name=name, description=desc)
         my_id = Plan.objects.latest('pk').id
         return redirect(f"/plan/{my_id}/details/")
@@ -120,6 +129,7 @@ def recipe(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
+
 
 class PlanDetails(View):
     def get(self, request, id):
