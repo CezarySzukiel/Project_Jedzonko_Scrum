@@ -108,7 +108,7 @@ class AddPlan(View):
                           {'message': f'Musisz uzupełnić wszystkie pola {desc}'})
         Plan.objects.create(name=name, description=desc)
         my_id = Plan.objects.latest('pk').id
-        return redirect(f"/plan/{my_id}/details/")
+        return redirect(f"/plan/{my_id}/")
 
 
 class AddRecipeToPlan(View):
