@@ -48,11 +48,6 @@ class RecipeView(View):
                        'ingredients': ingredients})
 
 
-# class RecipeList(View):
-# def get(self, request):
-#    return HttpResponse("Tu będzie lista przepisów")
-
-
 class AddRecipe(View):
     def get(self, request):
         return render(request, 'jedzonko/app-add-recipe.html')
