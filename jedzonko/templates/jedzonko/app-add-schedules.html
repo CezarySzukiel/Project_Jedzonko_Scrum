@@ -1,25 +1,30 @@
 {% extends "jedzonko/__base__.html" %}
 {% block content %}
 <div class="dashboard-content border-dashed p-3 m-4 view-height">
-
+<form method="POST">
     <div class="row border-bottom border-3 p-1 m-1">
         <div class="col noPadding">
             <h3 class="color-header text-uppercase">NOWY PLAN</h3>
         </div>
         <div class="col d-flex justify-content-end mb-2 noPadding">
-            <a href="" class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Zapisz</a>
+            <button type="submit" class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Zapisz</button>
         </div>
     </div>
 
+    {% if message %}
+    {{ message }}
+    {% endif %}
+
     <div class="schedules-content">
-        <form>
+
+            {% csrf_token %}
             <div class="form-group row">
                 <label for="planName"
                        class="col-sm-2 label-size col-form-label">
                     Nazwa planu
                 </label>
                 <div class="col-sm-10">
-                    <input type="email" class="form-control" id="planName"
+                    <input type="text" class="form-control" id="planName" name="planName"
                            placeholder="Nazwa planu">
                 </div>
             </div>
@@ -29,7 +34,7 @@
                     Opis planu
                 </label>
                 <div class="col-sm-10">
-                    <textarea class="form-control" rows="5" id="planDescription"
+                    <textarea class="form-control" rows="5" id="planDescription" name="planDescription"
                               placeholder="Opis plany"></textarea>
                 </div>
             </div>
