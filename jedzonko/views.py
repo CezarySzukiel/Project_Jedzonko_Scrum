@@ -113,7 +113,33 @@ class AddPlan(View):
 
 class AddRecipeToPlan(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie przepisu do planu")
+        plans = Plan.objects.all()
+        recipes = Recipe.objects.all()
+        days = DayName.objects.all()
+        return render(request, 'jedzonko/app-schedules-meal-recipe.html',
+                      {'plans': plans,
+                       'recipes': recipes,
+                       'days': days})
+
+    def post(self, request):
+        plan = request.POST.get('plan')
+        meal_name = request.POST.get('name')
+        meal_number = request.POST.get('number')
+        recipe_id = request.POST.get('recipe')
+        day = request.POST.get('day')
+
+        if not (meal_name or meal_number):
+            return HttpResponse('Pola nie mogą być puste')
+
+        try:
+            meal_number = int(meal_number)
+        except ValueError:
+            return HttpResponse('Numer musi być liczbą')
+
+        RecipePlan.objects.create(meal_name=meal_name, order=meal_number, day_name_id=day,
+                                  plan_id=plan, recipe_id=recipe_id)
+
+        return redirect(f'/plan/{plan}')
 
 
 def recipe(request):
@@ -128,11 +154,9 @@ def recipe(request):
 
 class PlanDetails(View):
     def get(self, request, id):
-
         plan = Plan.objects.get(pk=id)
         days = DayName.objects.filter(recipeplan__plan_id=id).distinct()
         meals = RecipePlan.objects.all()
         recipe_plan = RecipePlan.objects.filter(plan_id=id)
         context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals}
         return render(request, 'jedzonko/app-details-schedules.html', context)
-
