@@ -10,29 +10,40 @@ from jedzonko.models import *
 class IndexView(View):
 
     def get(self, request):
-        recipes = []
-        for my_recipe in Recipe.objects.all():
-            recipes.append([my_recipe.name, my_recipe.description])
-        random.shuffle(recipes)
+        if Recipe.objects.all().count() > 0:
+            recipes = []
+            for my_recipe in Recipe.objects.all():
+                recipes.append([my_recipe.name, my_recipe.description])
+            random.shuffle(recipes)
 
-        names = [i[0] for i in recipes[:3]]
-        descriptions = [i[1] for i in recipes[:3]]
+            names = [i[0] for i in recipes[:3]]
+            descriptions = [i[1] for i in recipes[:3]]
 
-        return render(request, "jedzonko/index.html", {'names': names,
-                                                       'descriptions': descriptions})
+            return render(request, "jedzonko/index.html", {'names': names,
+                                                           'descriptions': descriptions,
+                                                           'Recipes': "true"})
+        else:
+            return render(request, "jedzonko/index.html", {'lackOfRecipes': "Chwilowo brak przepisów :("})
 
 
 class Dashboard(View):
     def get(self, request):
-        newest_plan = Plan.objects.all().order_by('-id').first()
-        context = {
-            'recipes': Recipe.objects.all().count(),
-            'plans': Plan.objects.all().count(),
-            'newestPlan': newest_plan,
-            'recipePlan': RecipePlan.objects.filter(plan_id=newest_plan.id),
-            'days': DayName.objects.filter(recipeplan__plan_id=newest_plan.id).distinct(),
-        }
-        return render(request, "jedzonko/dashboard.html", context)
+        if Plan.objects.all().count() > 0:
+            newest_plan = Plan.objects.all().order_by('-id').first()
+            context = {
+                'recipes': Recipe.objects.all().count(),
+                'plans': Plan.objects.all().count(),
+                'newestPlan': newest_plan,
+                'recipePlan': RecipePlan.objects.filter(plan_id=newest_plan.id),
+                'days': DayName.objects.filter(recipeplan__plan_id=newest_plan.id).distinct(),
+            }
+            return render(request, "jedzonko/dashboard.html", context)
+        else:
+            context = {
+                'recipes': Recipe.objects.all().count(),
+                'plans': Plan.objects.all().count(),
+            }
+            return render(request, "jedzonko/dashboard.html", context)
 
 
 class RecipeView(View):
@@ -88,12 +99,15 @@ class ModifyRecipe(View):
 
 class PlanList(View):
     def get(self, request):
-        plan_list = Plan.objects.all().order_by('name')
-        paginator = Paginator(plan_list, 50)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
+        if Plan.objects.all().count() > 0:
+            plan_list = Plan.objects.all().order_by('name')
+            paginator = Paginator(plan_list, 50)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
 
-        return render(request, 'jedzonko/app-schedules.html', {'page_obj': page_obj})
+            return render(request, 'jedzonko/app-schedules.html', {'page_obj': page_obj})
+        else:
+            return render(request, 'jedzonko/app-schedules.html', {'lackOfPlans': "Chwilowo brak planów :("})
 
 
 class AddPlan(View):
@@ -117,22 +131,23 @@ class AddRecipeToPlan(View):
 
 
 def recipe(request):
-    recipes_list = Recipe.objects.all().order_by('-votes', 'created')
-    paginator = Paginator(recipes_list, 50)
+    if Recipe.objects.all().count() > 0:
+        recipes_list = Recipe.objects.all().order_by('-votes', 'created')
+        paginator = Paginator(recipes_list, 50)
 
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
 
-    return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
+        return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
+    else:
+        return render(request, 'jedzonko/app-recipes.html', {'lackOfRecipes': "Chwilowo brak przepisów :("})
 
 
 class PlanDetails(View):
     def get(self, request, id):
-
         plan = Plan.objects.get(pk=id)
         days = DayName.objects.filter(recipeplan__plan_id=id).distinct()
         meals = RecipePlan.objects.all()
         recipe_plan = RecipePlan.objects.filter(plan_id=id)
         context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals}
         return render(request, 'jedzonko/app-details-schedules.html', context)
-
