@@ -46,6 +46,7 @@ class RecipeView(View):
                       {'recipe': my_recipe,
                        'preparation': preparation,
                        'ingredients': ingredients})
+
     def post(self, request, id_):
         my_id = int(request.POST.get("my_id"))
         recipe = Recipe.objects.get(pk=my_id)
@@ -53,13 +54,12 @@ class RecipeView(View):
         if 'like' in request.POST:
             recipe.votes = recipe.votes + 1
             recipe.save()
-            
+
         if 'dislike' in request.POST:
             recipe.votes = recipe.votes - 1
             recipe.save()
 
         return redirect(f'/recipe/{my_id}/')
-
 
 
 class AddRecipe(View):
