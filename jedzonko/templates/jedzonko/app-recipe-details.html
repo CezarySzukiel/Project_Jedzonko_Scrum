@@ -41,6 +41,25 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="row d-flex">
+                <form method="POST">
+                    <div class="col d-flex justify-content-end mb-2">
+                        <input type="hidden" value="{{recipe.id}}" name="my_id">
+
+                        <button type="submit" name="like"
+                                class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
+                            Polub
+                        </button>
+                        <br>
+                        <button type="submit" name="dislike"
+                                class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
+                            Nie lubię tego przepisu
+                        </button>
+                    </div>
+                    {% csrf_token %}
+                </form>
+
+            </div>
 
             <div class="row d-flex">
                 <div class="col-5 border-bottom border-3"><h3
