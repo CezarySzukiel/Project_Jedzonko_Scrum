@@ -7,4 +7,5 @@ admin.site.register(Recipe)
 admin.site.register(Plan)
 admin.site.register(DayName)
 admin.site.register(RecipePlan)
+admin.site.register(Page)
 

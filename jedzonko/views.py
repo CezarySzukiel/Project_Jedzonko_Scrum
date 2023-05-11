@@ -20,7 +20,6 @@ class IndexView(View):
 
             names = [i[0] for i in recipes[:3]]
             descriptions = [i[1] for i in recipes[:3]]
-
             return render(request, "jedzonko/index.html", {'names': names,
                                                            'descriptions': descriptions,
                                                            'Recipes': "true",
@@ -248,3 +247,9 @@ class PlanDetails(View):
         recipe_plan = RecipePlan.objects.filter(plan_id=id)
         context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals}
         return render(request, 'jedzonko/app-details-schedules.html', context)
+
+
+class Contact(View):
+    def get(self, request):
+        page = [page_slug.slug for page_slug in Page.objects.all()]
+        return render(request, 'jedzonko/contact.html', {'page': page})
