@@ -46,6 +46,7 @@ class RecipeView(View):
                       {'recipe': my_recipe,
                        'preparation': preparation,
                        'ingredients': ingredients})
+
     def post(self, request, id_):
         my_id = int(request.POST.get("my_id"))
         recipe = Recipe.objects.get(pk=my_id)
@@ -59,7 +60,6 @@ class RecipeView(View):
             recipe.save()
 
         return redirect(f'/recipe/{my_id}/')
-
 
 
 class AddRecipe(View):
