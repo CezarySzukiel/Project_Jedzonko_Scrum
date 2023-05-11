@@ -113,7 +113,13 @@ class AddPlan(View):
 
 class AddRecipeToPlan(View):
     def get(self, request):
-        return HttpResponse("Tu będzie dodawanie przepisu do planu")
+        plans = Plan.objects.all()
+        recipes = Recipe.objects.all()
+        days = DayName.objects.all()
+        return render(request, 'jedzonko/app-schedules-meal-recipe.html',
+                      {'plans': plans,
+                       'recipes': recipes,
+                       'days': days})
 
 
 def recipe(request):
