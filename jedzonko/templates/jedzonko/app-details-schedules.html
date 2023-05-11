@@ -48,7 +48,7 @@
                 </thead>
                 <tbody class="text-color-lighter">
                 {%  for meal in meals %}
-                    {% if meal.day_name_id == day.id %}
+                    {% if meal.day_name_id == day.id and meal.plan_id == plan.id  %}
                         <tr class="d-flex">
                             <td class="col-2">{{ meal.meal_name }}</td>
                             <td class="col-7">{{ meal.recipe}}</td>
