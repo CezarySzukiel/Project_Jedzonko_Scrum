@@ -1,5 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 import random
 
 from django.shortcuts import render, redirect
@@ -83,7 +84,53 @@ class AddRecipe(View):
 
 class ModifyRecipe(View):
     def get(self, request, id):
-        return HttpResponse("Tu będzie modyfikacja przepisu")
+        try:
+            recipe = Recipe.objects.get(pk=id)
+        except ObjectDoesNotExist:
+            raise Http404
+        preparation = [i for i in recipe.preparation_method.split("\n") if i and i != '\r']
+        ingredients = [i for i in recipe.ingredients.split("\n") if i and i != '\r']
+        return render(request, 'jedzonko/app-edit-recipe.html', {
+            'recipe': recipe,
+            'preparation': preparation,
+            'ingredients': ingredients,
+        })
+    def post(self, request, id):
+        recipe = Recipe.objects.get(pk=id)
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        time = request.POST.get('time')
+
+        preparation = request.POST.get('preparation')
+        ingredients = request.POST.get('ingredients')
+
+        if not (name and description and time and preparation and ingredients):
+            preparation = [i for i in recipe.preparation_method.split("\n") if i and i != '\r']
+            ingredients = [i for i in recipe.ingredients.split("\n") if i and i != '\r']
+            return render(request, 'jedzonko/app-edit-recipe.html',
+                          {'message': 'Musisz uzupełnić wszystkie pola',
+                           'recipe': recipe,
+                           'preparation': preparation,
+                           'ingredients': ingredients})
+
+        if int(time) < 1:
+            preparation = [i for i in recipe.preparation_method.split("\n") if i and i != '\r']
+            ingredients = [i for i in recipe.ingredients.split("\n") if i and i != '\r']
+            return render(request, 'jedzonko/app-edit-recipe.html',
+                          {'message': 'Minimalny czas to 1 minuta',
+                           'recipe': recipe,
+                           'preparation': preparation,
+                           'ingredients': ingredients})
+
+        recipe.name = name
+        recipe.description = description
+        recipe.preparation_time = time
+        recipe.ingredients = ingredients
+        recipe.preparation_method = preparation
+        recipe.save()
+
+        return redirect('/recipe/list/')
+
 
 
 class PlanList(View):
