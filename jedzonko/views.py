@@ -11,6 +11,7 @@ from jedzonko.models import *
 class IndexView(View):
 
     def get(self, request):
+        page = [page_slug.slug for page_slug in Page.objects.all()]
         if Recipe.objects.all().count() > 0:
             recipes = []
             for my_recipe in Recipe.objects.all():
@@ -22,9 +23,12 @@ class IndexView(View):
 
             return render(request, "jedzonko/index.html", {'names': names,
                                                            'descriptions': descriptions,
-                                                           'Recipes': "true"})
+                                                           'Recipes': "true",
+                                                           'pages': page})
+
         else:
-            return render(request, "jedzonko/index.html", {'lackOfRecipes': "Chwilowo brak przepisów :("})
+            return render(request, "jedzonko/index.html", {'lackOfRecipes': "Chwilowo brak przepisów :(",
+                                                           'pages': page})
 
 
 class Dashboard(View):
@@ -47,6 +51,12 @@ class Dashboard(View):
             return render(request, "jedzonko/dashboard.html", context)
 
 
+class About(View):
+    def get(self, request):
+        page = [page_slug.slug for page_slug in Page.objects.all()]
+        return render(request, 'jedzonko/about.html', {'page': page})
+
+
 class RecipeView(View):
     def get(self, request, id_):
         my_recipe = Recipe.objects.get(pk=id_)
@@ -58,6 +68,7 @@ class RecipeView(View):
                       {'recipe': my_recipe,
                        'preparation': preparation,
                        'ingredients': ingredients})
+
     def post(self, request, id_):
         my_id = int(request.POST.get("my_id"))
         recipe = Recipe.objects.get(pk=my_id)
@@ -65,13 +76,12 @@ class RecipeView(View):
         if 'like' in request.POST:
             recipe.votes = recipe.votes + 1
             recipe.save()
-            
+
         if 'dislike' in request.POST:
             recipe.votes = recipe.votes - 1
             recipe.save()
 
         return redirect(f'/recipe/{my_id}/')
-
 
 
 class AddRecipe(View):
@@ -120,6 +130,7 @@ class ModifyRecipe(View):
             'preparation': preparation,
             'ingredients': ingredients,
         })
+
     def post(self, request, id):
         recipe = Recipe.objects.get(pk=id)
         name = request.POST.get('name')
@@ -155,7 +166,6 @@ class ModifyRecipe(View):
         recipe.save()
 
         return redirect('/recipe/list/')
-
 
 
 class PlanList(View):
