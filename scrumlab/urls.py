@@ -29,4 +29,6 @@ urlpatterns = [
     path('plan/add-recipe/', jedzonko_views.AddRecipeToPlan.as_view()),
     path('recipe/list/', jedzonko_views.recipe, name='recipe'),
     path('plan/<int:id>/', jedzonko_views.PlanDetails.as_view(), name='plan_details'),
+    path('contact/', jedzonko_views.Contact.as_view(), name='contact'),
+
 ]
