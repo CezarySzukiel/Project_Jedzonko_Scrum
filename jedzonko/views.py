@@ -232,7 +232,7 @@ def recipe(request):
         recipes_list = Recipe.objects.all().order_by('-votes', 'created')
         if "search" in request.POST:
             searchQuery = request.POST.get("searchText")
-            recipes_list = Recipe.objects.all().filter(name__contains=searchQuery).order_by('-votes', 'created')
+            recipes_list = Recipe.objects.all().filter(name__icontains=searchQuery).order_by('-votes', 'created')
             if recipes_list.count() < 1:
                 error = "Nie ma przepisów o takiej nazwie"
                 recipes_list = Recipe.objects.all().order_by('-votes', 'created')
