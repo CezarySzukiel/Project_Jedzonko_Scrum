@@ -8,9 +8,17 @@
                 <h3 class="color-header text-uppercase">SZCZEGÓŁY PLANU</h3>
             </div>
             <div class="col d-flex justify-content-end mb-2 noPadding">
-                <a href="/plan/add-recipe/" class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj przepis do
-                    planu</a><br/>
-                <a href="/plan/list/" class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Powrót</a>
+
+                <div>
+                    <a href="/plan/add-recipe/" class="btn btn-success rounded-0 text-light m-1">Dodaj przepis do planu</a>
+                </div>
+                <div>
+                    <a href="/plan/modify/{{ plan.id }}" class="btn btn-warning rounded-0 text-light m-1">Edytuj</a>
+                </div>
+                <div>
+                    <a href="/plan/list/" class="btn btn-success rounded-0 text-light m-1">Powrót</a>
+                </div>
+
             </div>
         </div>
 
@@ -53,6 +61,7 @@
                             <tr class="d-flex">
                                 <td class="col-2">{{ meal.meal_name }}</td>
                                 <td class="col-7">{{ meal.recipe }}</td>
+
                                 <form method="post">
                                     {% csrf_token %}
                                     <td class="col-1 center">
