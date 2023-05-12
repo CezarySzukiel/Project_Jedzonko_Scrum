@@ -200,10 +200,14 @@ class AddRecipeToPlan(View):
         plans = Plan.objects.all()
         recipes = Recipe.objects.all()
         days = DayName.objects.all()
+        plan_id = request.GET.get('plan_id')
+        recipe_id = request.GET.get('recipe_id')
         return render(request, 'jedzonko/app-schedules-meal-recipe.html',
                       {'plans': plans,
                        'recipes': recipes,
-                       'days': days})
+                       'days': days,
+                       'plan_id': convert_to_int(plan_id),
+                       'recipe_id': convert_to_int(recipe_id)})
 
     def post(self, request):
         plan = request.POST.get('plan')
@@ -252,7 +256,9 @@ class PlanDetails(View):
         days = DayName.objects.filter(recipeplan__plan_id=id).distinct()
         meals = RecipePlan.objects.all()
         recipe_plan = RecipePlan.objects.filter(plan_id=id)
-        context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals}
+        plan_id = request.GET.get('plan_id')
+        context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals,
+                   'plan_id': convert_to_int(plan_id)}
         return render(request, 'jedzonko/app-details-schedules.html', context)
 
     def post(self, request, id):
@@ -286,4 +292,10 @@ class EditPlan(View):
         plan.description = desc
         plan.save()
         return redirect(f'/plan/{plan.id}')
+
+
+
+def convert_to_int(value):
+    if value:
+        return int(value)
 
