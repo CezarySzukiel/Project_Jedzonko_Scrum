@@ -27,7 +27,7 @@ urlpatterns = [
     path('plan/list/', jedzonko_views.PlanList.as_view()),
     path('plan/add/', jedzonko_views.AddPlan.as_view()),
     path('plan/add-recipe/', jedzonko_views.AddRecipeToPlan.as_view()),
-    path('recipe/list/', jedzonko_views.recipe, name='recipe'),
+    path('recipe/list/', jedzonko_views.RecipeViews.as_view(), name='recipe'),
     path('plan/<int:id>/', jedzonko_views.PlanDetails.as_view(), name='plan_details'),
     path('contact/', jedzonko_views.Contact.as_view(), name='contact'),
     path('about/', jedzonko_views.About.as_view(), name='about'),
