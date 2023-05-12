@@ -1,20 +1,20 @@
 {% extends "jedzonko/__base__.html" %}
 {% block title %}{% endblock title %}
 {% block content %}
-<div class="dashboard-content border-dashed p-3 m-4 view-height">
-    <form action="/plan/modify/{{ plan.id }}/" method="post">
-        {% csrf_token %}
-        <div class="row border-bottom border-3 p-1 m-1">
-            <div class="col noPadding">
-                <h3 class="color-header text-uppercase">NOWY PLAN</h3>
+    <div class="dashboard-content border-dashed p-3 m-4 view-height">
+        <form action="/plan/modify/{{ plan.id }}/" method="post">
+            {% csrf_token %}
+            <div class="row border-bottom border-3 p-1 m-1">
+                <div class="col noPadding">
+                    <h3 class="color-header text-uppercase">NOWY PLAN</h3>
+                </div>
+
+                <div class="col d-flex justify-content-end mb-2 noPadding">
+                    <button type="submit" class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Zapisz</button>
+                </div>
             </div>
 
-            <div class="col d-flex justify-content-end mb-2 noPadding">
-                <button type="submit" class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Zapisz</button>
-            </div>
-        </div>
-
-        <div class="schedules-content">
+            <div class="schedules-content">
 
                 <div class="form-group row">
                     <label for="planName"
@@ -35,13 +35,11 @@
                     <div class="col-sm-10">
                         <textarea class="form-control" name="planDescription" rows="5"
                                   id="planDescription"
-                                  placeholder="Opis planu">
-{{ plan.description }}
-                        </textarea>
+                                  placeholder="Opis planu">{{ plan.description }}</textarea>
                     </div>
                 </div>
 
-        </div>
-    </form>
-</div>
+            </div>
+        </form>
+    </div>
 {% endblock content %}
