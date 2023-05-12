@@ -265,3 +265,25 @@ class Contact(View):
     def get(self, request):
         page = [page_slug.slug for page_slug in Page.objects.all()]
         return render(request, 'jedzonko/contact.html', {'page': page})
+
+
+class EditPlan(View):
+    def get(self, request, plan_id):
+        plan = Plan.objects.get(pk=plan_id)
+        print('przesłano metodą get')
+        return render(request, 'jedzonko/app-edit-schedules.html', {'plan': plan})
+
+    def post(self, request, plan_id):
+        print('przesłano metodą post')
+        plan = Plan.objects.get(pk=plan_id)
+        name = request.POST.get('planName')
+        desc = request.POST.get('planDescription')
+        print('name i desc: ', name, desc)
+        if not (name and desc):
+            return HttpResponse('Pola nie mogą być puste')
+
+        plan.name = name
+        plan.description = desc
+        plan.save()
+        return redirect(f'/plan/{plan.id}')
+
