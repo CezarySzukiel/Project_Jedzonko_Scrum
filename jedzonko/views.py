@@ -248,6 +248,11 @@ class PlanDetails(View):
         context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals}
         return render(request, 'jedzonko/app-details-schedules.html', context)
 
+    def post(self, request, id):
+        meal_id = request.POST.get('id')
+        RecipePlan.objects.get(pk=meal_id).delete()
+        return redirect(f'/plan/{id}')
+
 
 class Contact(View):
     def get(self, request):
