@@ -11,6 +11,19 @@
                     class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj
                 przepis</a></div>
         </div>
+        {% if error %}
+            {{error}}
+        {% endif %}
+        <div class="border-bottom border-3 p-1 m-1 inline-block">
+            <form method="POST">
+                <textarea placeholder="Search recipe by name" class="w-25 p-1" rows="1" name="searchText"></textarea>
+                <button type="submit" name="search"
+                                class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
+                            Search
+                        </button>
+                {% csrf_token %}
+            </form>
+            </div>
         <table class="table border-bottom schedules-content">
             {% if page_obj %}
                 <thead>
