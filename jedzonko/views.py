@@ -273,5 +273,5 @@ class EditPlan(View):
         plan.name = name
         plan.description = desc
         plan.save()
-        return redirect(f'/plan/list/')
+        return redirect(f'/plan/{plan.id}')
 
