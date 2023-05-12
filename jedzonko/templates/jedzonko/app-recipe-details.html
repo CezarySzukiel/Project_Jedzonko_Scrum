@@ -9,7 +9,7 @@
                     przepisu</h3></div>
                 <div class="col d-flex justify-content-end mb-2">
                     <a href="/plan/add-recipe/?recipe_id={{recipe.id}}"
-                        class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj do planu</a>
+                       class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4" style="background: green">Dodaj do planu</a>
                     <a href="{% url 'recipe' %}"
                         class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">Powrót</a>
                 </div>
@@ -37,31 +37,31 @@
                 </tr>
                 <tr class="d-flex">
                     <th scope="row" class="col-2">Liczba polubień</th>
-                    <td class="col-7">
-                        {{ recipe.votes }}
+                    <td class="col-7 likes">
+                        <div>{{ recipe.votes }}</div>
+                        <div class="row d-flex">
+                            <form method="POST">
+                                <div class="col d-flex justify-content-between mb-2" style="margin-top: 5px">
+                                    <input type="hidden" value="{{ recipe.id }}" name="my_id">
+
+                                    <button type="submit" name="like" style="border: none; background: none; margin-right: 5px">
+                                        {% load static %}
+                                        <img src="{% static 'images/like.png' %}" alt="LIKE" width="32" height="32">
+                                    </button>
+                                    <br>
+                                    <button type="submit" name="dislike" style="border: none; background: none">
+                                        <img src="{% static 'images/dislike.png' %}" alt="LIKE" width="32" height="32">
+                                    </button>
+                                </div>
+                                {% csrf_token %}
+                            </form>
+                        </div>
                     </td>
+
                 </tr>
                 </tbody>
             </table>
-            <div class="row d-flex">
-                <form method="POST">
-                    <div class="col d-flex justify-content-end mb-2">
-                        <input type="hidden" value="{{recipe.id}}" name="my_id">
 
-                        <button type="submit" name="like"
-                                class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
-                            Polub
-                        </button>
-                        <br>
-                        <button type="submit" name="dislike"
-                                class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
-                            Nie lubię tego przepisu
-                        </button>
-                    </div>
-                    {% csrf_token %}
-                </form>
-
-            </div>
 
             <div class="row d-flex">
                 <div class="col-5 border-bottom border-3"><h3
