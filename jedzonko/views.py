@@ -70,15 +70,15 @@ class RecipeView(View):
 
     def post(self, request, id_):
         my_id = int(request.POST.get("my_id"))
-        recipe = Recipe.objects.get(pk=my_id)
+        recipe_ = Recipe.objects.get(pk=my_id)
 
         if 'like' in request.POST:
-            recipe.votes = recipe.votes + 1
-            recipe.save()
+            recipe_.votes = recipe_.votes + 1
+            recipe_.save()
 
         if 'dislike' in request.POST:
-            recipe.votes = recipe.votes - 1
-            recipe.save()
+            recipe_.votes = recipe_.votes - 1
+            recipe_.save()
 
         return redirect(f'/recipe/{my_id}/')
 
@@ -117,21 +117,21 @@ class AddRecipe(View):
 
 
 class ModifyRecipe(View):
-    def get(self, request, id):
+    def get(self, request, id_):
         try:
-            recipe = Recipe.objects.get(pk=id)
+            recipe_ = Recipe.objects.get(pk=id_)
         except ObjectDoesNotExist:
             raise Http404
-        preparation = [i for i in recipe.preparation_method.split("\n") if i and i != '\r']
-        ingredients = [i for i in recipe.ingredients.split("\n") if i and i != '\r']
+        preparation = [i for i in recipe_.preparation_method.split("\n") if i and i != '\r']
+        ingredients = [i for i in recipe_.ingredients.split("\n") if i and i != '\r']
         return render(request, 'jedzonko/app-edit-recipe.html', {
-            'recipe': recipe,
+            'recipe': recipe_,
             'preparation': preparation,
             'ingredients': ingredients,
         })
 
-    def post(self, request, id):
-        recipe = Recipe.objects.get(pk=id)
+    def post(self, request, id_):
+        recipe_ = Recipe.objects.get(pk=id_)
         name = request.POST.get('name')
         description = request.POST.get('description')
         time = request.POST.get('time')
@@ -140,29 +140,29 @@ class ModifyRecipe(View):
         ingredients = request.POST.get('ingredients')
 
         if not (name and description and time and preparation and ingredients):
-            preparation = [i for i in recipe.preparation_method.split("\n") if i and i != '\r']
-            ingredients = [i for i in recipe.ingredients.split("\n") if i and i != '\r']
+            preparation = [i for i in recipe_.preparation_method.split("\n") if i and i != '\r']
+            ingredients = [i for i in recipe_.ingredients.split("\n") if i and i != '\r']
             return render(request, 'jedzonko/app-edit-recipe.html',
                           {'message': 'Musisz uzupełnić wszystkie pola',
-                           'recipe': recipe,
+                           'recipe': recipe_,
                            'preparation': preparation,
                            'ingredients': ingredients})
 
         if int(time) < 1:
-            preparation = [i for i in recipe.preparation_method.split("\n") if i and i != '\r']
-            ingredients = [i for i in recipe.ingredients.split("\n") if i and i != '\r']
+            preparation = [i for i in recipe_.preparation_method.split("\n") if i and i != '\r']
+            ingredients = [i for i in recipe_.ingredients.split("\n") if i and i != '\r']
             return render(request, 'jedzonko/app-edit-recipe.html',
                           {'message': 'Minimalny czas to 1 minuta',
-                           'recipe': recipe,
+                           'recipe': recipe_,
                            'preparation': preparation,
                            'ingredients': ingredients})
 
-        recipe.name = name
-        recipe.description = description
-        recipe.preparation_time = time
-        recipe.ingredients = ingredients
-        recipe.preparation_method = preparation
-        recipe.save()
+        recipe_.name = name
+        recipe_.description = description
+        recipe_.preparation_time = time
+        recipe_.ingredients = ingredients
+        recipe_.preparation_method = preparation
+        recipe_.save()
 
         return redirect('/recipe/list/')
 
@@ -235,8 +235,8 @@ def recipe(request):
         error = None
         recipes_list = Recipe.objects.all().order_by('-votes', 'created')
         if "search" in request.POST:
-            searchQuery = request.POST.get("searchText")
-            recipes_list = Recipe.objects.all().filter(name__icontains=searchQuery).order_by('-votes', 'created')
+            search_query = request.POST.get("searchText")
+            recipes_list = Recipe.objects.all().filter(name__icontains=search_query).order_by('-votes', 'created')
             if recipes_list.count() < 1:
                 error = "Nie ma przepisów o takiej nazwie"
                 recipes_list = Recipe.objects.all().order_by('-votes', 'created')
@@ -251,20 +251,20 @@ def recipe(request):
 
 
 class PlanDetails(View):
-    def get(self, request, id):
-        plan = Plan.objects.get(pk=id)
-        days = DayName.objects.filter(recipeplan__plan_id=id).distinct()
+    def get(self, request, id_):
+        plan = Plan.objects.get(pk=id_)
+        days = DayName.objects.filter(recipeplan__plan_id=id_).distinct()
         meals = RecipePlan.objects.all()
-        recipe_plan = RecipePlan.objects.filter(plan_id=id)
+        recipe_plan = RecipePlan.objects.filter(plan_id=id_)
         plan_id = request.GET.get('plan_id')
         context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals,
                    'plan_id': convert_to_int(plan_id)}
         return render(request, 'jedzonko/app-details-schedules.html', context)
 
-    def post(self, request, id):
+    def post(self, request, id_):
         meal_id = request.POST.get('id')
         RecipePlan.objects.get(pk=meal_id).delete()
-        return redirect(f'/plan/{id}')
+        return redirect(f'/plan/{id_}')
 
 
 class Contact(View):
@@ -294,8 +294,6 @@ class EditPlan(View):
         return redirect(f'/plan/{plan.id}')
 
 
-
 def convert_to_int(value):
     if value:
         return int(value)
-
