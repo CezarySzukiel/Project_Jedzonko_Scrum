@@ -1,5 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 import random
 
 from django.shortcuts import render, redirect
@@ -10,29 +11,49 @@ from jedzonko.models import *
 class IndexView(View):
 
     def get(self, request):
-        recipes = []
-        for my_recipe in Recipe.objects.all():
-            recipes.append([my_recipe.name, my_recipe.description])
-        random.shuffle(recipes)
+        page = [page_slug.slug for page_slug in Page.objects.all()]
+        if Recipe.objects.all().count() > 0:
+            recipes = []
+            for my_recipe in Recipe.objects.all():
+                recipes.append([my_recipe.name, my_recipe.description])
+            random.shuffle(recipes)
 
-        names = [i[0] for i in recipes[:3]]
-        descriptions = [i[1] for i in recipes[:3]]
+            names = [i[0] for i in recipes[:3]]
+            descriptions = [i[1] for i in recipes[:3]]
+            return render(request, "jedzonko/index.html", {'names': names,
+                                                           'descriptions': descriptions,
+                                                           'Recipes': "true",
+                                                           'pages': page})
 
-        return render(request, "jedzonko/index.html", {'names': names,
-                                                       'descriptions': descriptions})
+        else:
+            return render(request, "jedzonko/index.html", {'lackOfRecipes': "Chwilowo brak przepisów :(",
+                                                           'pages': page})
 
 
 class Dashboard(View):
     def get(self, request):
-        newest_plan = Plan.objects.all().order_by('-id').first()
-        context = {
-            'recipes': Recipe.objects.all().count(),
-            'plans': Plan.objects.all().count(),
-            'newestPlan': newest_plan,
-            'recipePlan': RecipePlan.objects.filter(plan_id=newest_plan.id),
-            'days': DayName.objects.filter(recipeplan__plan_id=newest_plan.id).distinct(),
-        }
-        return render(request, "jedzonko/dashboard.html", context)
+        if Plan.objects.all().count() > 0:
+            newest_plan = Plan.objects.all().order_by('-id').first()
+            context = {
+                'recipes': Recipe.objects.all().count(),
+                'plans': Plan.objects.all().count(),
+                'newestPlan': newest_plan,
+                'recipePlan': RecipePlan.objects.filter(plan_id=newest_plan.id),
+                'days': DayName.objects.filter(recipeplan__plan_id=newest_plan.id).distinct(),
+            }
+            return render(request, "jedzonko/dashboard.html", context)
+        else:
+            context = {
+                'recipes': Recipe.objects.all().count(),
+                'plans': Plan.objects.all().count(),
+            }
+            return render(request, "jedzonko/dashboard.html", context)
+
+
+class About(View):
+    def get(self, request):
+        page = [page_slug.slug for page_slug in Page.objects.all()]
+        return render(request, 'jedzonko/about.html', {'page': page})
 
 
 class RecipeView(View):
@@ -46,20 +67,20 @@ class RecipeView(View):
                       {'recipe': my_recipe,
                        'preparation': preparation,
                        'ingredients': ingredients})
+
     def post(self, request, id_):
         my_id = int(request.POST.get("my_id"))
-        recipe = Recipe.objects.get(pk=my_id)
+        recipe_ = Recipe.objects.get(pk=my_id)
 
         if 'like' in request.POST:
-            recipe.votes = recipe.votes + 1
-            recipe.save()
-            
+            recipe_.votes = recipe_.votes + 1
+            recipe_.save()
+
         if 'dislike' in request.POST:
-            recipe.votes = recipe.votes - 1
-            recipe.save()
+            recipe_.votes = recipe_.votes - 1
+            recipe_.save()
 
         return redirect(f'/recipe/{my_id}/')
-
 
 
 class AddRecipe(View):
@@ -96,18 +117,72 @@ class AddRecipe(View):
 
 
 class ModifyRecipe(View):
-    def get(self, request, id):
-        return HttpResponse("Tu będzie modyfikacja przepisu")
+    def get(self, request, id_):
+        try:
+            recipe_ = Recipe.objects.get(pk=id_)
+        except ObjectDoesNotExist:
+            raise Http404
+        preparation = [i for i in recipe_.preparation_method.split("\n") if i and i != '\r']
+        ingredients = [i for i in recipe_.ingredients.split("\n") if i and i != '\r']
+        return render(request, 'jedzonko/app-edit-recipe.html', {
+            'recipe': recipe_,
+            'preparation': preparation,
+            'ingredients': ingredients,
+        })
+
+    def post(self, request, id_):
+        recipe_ = Recipe.objects.get(pk=id_)
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        time = request.POST.get('time')
+
+        preparation = request.POST.get('preparation')
+        ingredients = request.POST.get('ingredients')
+
+        if not (name and description and time and preparation and ingredients):
+            preparation = [i for i in recipe_.preparation_method.split("\n") if i and i != '\r']
+            ingredients = [i for i in recipe_.ingredients.split("\n") if i and i != '\r']
+            return render(request, 'jedzonko/app-edit-recipe.html',
+                          {'message': 'Musisz uzupełnić wszystkie pola',
+                           'recipe': recipe_,
+                           'preparation': preparation,
+                           'ingredients': ingredients})
+
+        if int(time) < 1:
+            preparation = [i for i in recipe_.preparation_method.split("\n") if i and i != '\r']
+            ingredients = [i for i in recipe_.ingredients.split("\n") if i and i != '\r']
+            return render(request, 'jedzonko/app-edit-recipe.html',
+                          {'message': 'Minimalny czas to 1 minuta',
+                           'recipe': recipe_,
+                           'preparation': preparation,
+                           'ingredients': ingredients})
+
+        recipe_.name = name
+        recipe_.description = description
+        recipe_.preparation_time = time
+        recipe_.ingredients = ingredients
+        recipe_.preparation_method = preparation
+        recipe_.save()
+
+        return redirect('/recipe/list/')
 
 
 class PlanList(View):
     def get(self, request):
-        plan_list = Plan.objects.all().order_by('name')
-        paginator = Paginator(plan_list, 50)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
+        if Plan.objects.all().count() > 0:
+            plan_list = Plan.objects.all().order_by('name')
+            paginator = Paginator(plan_list, 50)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
 
-        return render(request, 'jedzonko/app-schedules.html', {'page_obj': page_obj})
+            return render(request, 'jedzonko/app-schedules.html', {'page_obj': page_obj})
+        else:
+            return render(request, 'jedzonko/app-schedules.html', {'lackOfPlans': "Chwilowo brak planów :("})
+
+    def post(self, request):
+        plan_id = request.POST.get('id')
+        Plan.objects.get(pk=plan_id).delete()
+        return redirect('/plan/list/')
 
 
 class AddPlan(View):
@@ -130,10 +205,14 @@ class AddRecipeToPlan(View):
         plans = Plan.objects.all()
         recipes = Recipe.objects.all()
         days = DayName.objects.all()
+        plan_id = request.GET.get('plan_id')
+        recipe_id = request.GET.get('recipe_id')
         return render(request, 'jedzonko/app-schedules-meal-recipe.html',
                       {'plans': plans,
                        'recipes': recipes,
-                       'days': days})
+                       'days': days,
+                       'plan_id': convert_to_int(plan_id),
+                       'recipe_id': convert_to_int(recipe_id)})
 
     def post(self, request):
         plan = request.POST.get('plan')
@@ -156,21 +235,86 @@ class AddRecipeToPlan(View):
         return redirect(f'/plan/{plan}')
 
 
-def recipe(request):
-    recipes_list = Recipe.objects.all().order_by('-votes', 'created')
-    paginator = Paginator(recipes_list, 50)
+class RecipeViews(View):
+    def get(self, request):
+        if Recipe.objects.all().count() > 0:
+            error = None
+            recipes_list = Recipe.objects.all().order_by('-votes', 'created')
 
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+            paginator = Paginator(recipes_list, 50)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
 
-    return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj})
+            return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj, 'error': error})
+        else:
+            return render(request, 'jedzonko/app-recipes.html', {'lackOfRecipes': "Chwilowo brak przepisów :("})
+
+    def post(self, request):
+        recipe_id = request.POST.get('id')
+        if Recipe.objects.all().count() > 0:
+            error = None
+            recipes_list = Recipe.objects.all().order_by('-votes', 'created')
+
+            if "search" in request.POST:
+                searchQuery = request.POST.get("searchText")
+                recipes_list = Recipe.objects.all().filter(name__icontains=searchQuery).order_by('-votes', 'created')
+                if recipes_list.count() < 1:
+                    error = "Nie ma przepisów o takiej nazwie"
+                    recipes_list = Recipe.objects.all().order_by('-votes', 'created')
+
+                paginator = Paginator(recipes_list, 50)
+                page_number = request.GET.get("page")
+                page_obj = paginator.get_page(page_number)
+
+                return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj, 'error': error})
+        Recipe.objects.get(pk=recipe_id).delete()
+        return redirect('/recipe/list/')
 
 
 class PlanDetails(View):
-    def get(self, request, id):
-        plan = Plan.objects.get(pk=id)
-        days = DayName.objects.filter(recipeplan__plan_id=id).distinct()
+    def get(self, request, id_):
+        plan = Plan.objects.get(pk=id_)
+        days = DayName.objects.filter(recipeplan__plan_id=id_).distinct()
         meals = RecipePlan.objects.all()
-        recipe_plan = RecipePlan.objects.filter(plan_id=id)
-        context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals}
+        recipe_plan = RecipePlan.objects.filter(plan_id=id_)
+        plan_id = request.GET.get('plan_id')
+        context = {'plan': plan, 'recipe_plan': recipe_plan, 'days': days, 'meals': meals,
+                   'plan_id': convert_to_int(plan_id)}
         return render(request, 'jedzonko/app-details-schedules.html', context)
+
+    def post(self, request, id_):
+        meal_id = request.POST.get('id')
+        RecipePlan.objects.get(pk=meal_id).delete()
+        return redirect(f'/plan/{id_}')
+
+
+class Contact(View):
+    def get(self, request):
+        page = [page_slug.slug for page_slug in Page.objects.all()]
+        return render(request, 'jedzonko/contact.html', {'page': page})
+
+
+class EditPlan(View):
+    def get(self, request, plan_id):
+        plan = Plan.objects.get(pk=plan_id)
+        print('przesłano metodą get')
+        return render(request, 'jedzonko/app-edit-schedules.html', {'plan': plan})
+
+    def post(self, request, plan_id):
+        print('przesłano metodą post')
+        plan = Plan.objects.get(pk=plan_id)
+        name = request.POST.get('planName')
+        desc = request.POST.get('planDescription')
+        print('name i desc: ', name, desc)
+        if not (name and desc):
+            return HttpResponse('Pola nie mogą być puste')
+
+        plan.name = name
+        plan.description = desc
+        plan.save()
+        return redirect(f'/plan/{plan.id}')
+
+
+def convert_to_int(value):
+    if value:
+        return int(value)

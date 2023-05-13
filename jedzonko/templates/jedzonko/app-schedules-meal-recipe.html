@@ -23,7 +23,7 @@
                         <div class="col-sm-3">
                             <select class="form-control" id="choosePlan" name="plan">
                                 {% for plan in plans %}
-                                    <option value="{{ plan.id }}">{{ plan.name }}</option>
+                                    <option value="{{ plan.id }}" {% if plan_id == plan.id %}selected{% endif %}>{{ plan.name }} </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -53,7 +53,7 @@
                         <div class="col-sm-4">
                             <select class="form-control" id="recipie" name="recipe">
                                 {% for recipe in recipes %}
-                                    <option value="{{ recipe.id }}">{{ recipe.name }}</option>
+                                    <option value="{{ recipe.id }}" {% if recipe.id == recipe_id %}selected{% endif %}>{{ recipe.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
