@@ -240,12 +240,6 @@ class RecipeViews(View):
         if Recipe.objects.all().count() > 0:
             error = None
             recipes_list = Recipe.objects.all().order_by('-votes', 'created')
-            if "search" in request.POST:
-                searchQuery = request.POST.get("searchText")
-                recipes_list = Recipe.objects.all().filter(name__icontains=searchQuery).order_by('-votes', 'created')
-                if recipes_list.count() < 1:
-                    error = "Nie ma przepisów o takiej nazwie"
-                    recipes_list = Recipe.objects.all().order_by('-votes', 'created')
 
             paginator = Paginator(recipes_list, 50)
             page_number = request.GET.get("page")
@@ -257,6 +251,22 @@ class RecipeViews(View):
 
     def post(self, request):
         recipe_id = request.POST.get('id')
+        if Recipe.objects.all().count() > 0:
+            error = None
+            recipes_list = Recipe.objects.all().order_by('-votes', 'created')
+
+            if "search" in request.POST:
+                searchQuery = request.POST.get("searchText")
+                recipes_list = Recipe.objects.all().filter(name__icontains=searchQuery).order_by('-votes', 'created')
+                if recipes_list.count() < 1:
+                    error = "Nie ma przepisów o takiej nazwie"
+                    recipes_list = Recipe.objects.all().order_by('-votes', 'created')
+
+                paginator = Paginator(recipes_list, 50)
+                page_number = request.GET.get("page")
+                page_obj = paginator.get_page(page_number)
+
+                return render(request, 'jedzonko/app-recipes.html', {'page_obj': page_obj, 'error': error})
         Recipe.objects.get(pk=recipe_id).delete()
         return redirect('/recipe/list/')
 
@@ -305,8 +315,6 @@ class EditPlan(View):
         return redirect(f'/plan/{plan.id}')
 
 
-
 def convert_to_int(value):
     if value:
         return int(value)
-
