@@ -5,8 +5,8 @@ Pani Maria Iksińska napisała książkę kucharską, która stała się bestsel
 Pani Maria chce rozwijać swój biznes, a do zrealizowania swoich celów potrzebuje strony-wizytówki oraz prostej aplikacji do planowania posiłków.
 
 ## Plan tego repozytorium
-* `scrumlab` – katalog z projektem Django. Znajdują się w nim pliki
+* `scrumlab` – katalog z projektem Django.
   - `settings.py` – ustawienia projektu,
   - `urls.py` – dane URL-i,
-* `jedzonko` – katalog aplikacji Django, nad którą będziesz pracował.
-* `static` – katalog z plikami statycznymi; po szczegóły zajrzyj do rozdziału **Konfiguracja projektu**
+* `jedzonko` – katalog aplikacji Django,
+* `static` – katalog z plikami statycznymi
